@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= typeof title !== 'undefined' ? title + ' | ' : '' %>Lost & Found</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="brand">🔎 Lost & Found</a>
+  <div class="nav-links">
+    <% if (user) { %>
+      <a href="/items/new" class="btn btn-sm">+ แจ้งของหาย / เก็บได้</a>
+      <% if (user.role === 'admin') { %><a href="/admin">แผงแอดมิน</a><% } %>
+      <span class="muted">👤 <%= user.username %></span>
+      <form action="/logout" method="post" class="inline"><button class="link">ออกจากระบบ</button></form>
+    <% } else { %>
+      <a href="/login">เข้าสู่ระบบ</a>
+      <a href="/register" class="btn btn-sm">สมัครสมาชิก</a>
+    <% } %>
+  </div>
+</nav>
+<main class="container">
+<% if (flash) { %><div class="flash <%= flash.type %>"><%= flash.msg %></div><% } %>

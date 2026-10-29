@@ -1,0 +1,16 @@
+<a class="card item" href="/items/<%= i.id %>">
+  <% if (i.image) { %>
+    <img src="/uploads/<%= i.image %>" alt="<%= i.title %>">
+  <% } else { %>
+    <div class="noimg">ไม่มีรูปภาพ</div>
+  <% } %>
+  <div class="item-body">
+    <span class="badge <%= i.type %>"><%= i.type === 'lost' ? 'ของหาย' : 'เก็บได้' %></span>
+    <% if (i.status === 'returned') { %><span class="badge returned">คืนแล้ว</span><% } %>
+    <h3><%= i.title %></h3>
+    <p class="muted small">📍 <%= i.location || 'ไม่ระบุสถานที่' %><%= i.event_date ? ' · ' + i.event_date : '' %></p>
+    <div class="tags">
+      <% i.tags.forEach(t => { %><span class="tag">#<%= t %></span><% }) %>
+    </div>
+  </div>
+</a>
