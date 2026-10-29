@@ -1,0 +1,25 @@
+<%- include('partials/header', { title: item ? 'แก้ไขรายการ' : 'แจ้งรายการใหม่' }) %>
+<div class="card form-card">
+  <h2><%= item ? 'แก้ไขรายการ' : 'แจ้งของหาย / ของที่เก็บได้' %></h2>
+  <form method="post" action="<%= action %>" enctype="multipart/form-data">
+    <div class="radio">
+      <label><input type="radio" name="type" value="lost" <%= !item || item.type === 'lost' ? 'checked' : '' %>> ของหาย (ตามหา)</label>
+      <label><input type="radio" name="type" value="found" <%= item && item.type === 'found' ? 'checked' : '' %>> ของที่เก็บได้</label>
+    </div>
+    <label>ชื่อสิ่งของ *<input name="title" required maxlength="100" value="<%= item ? item.title : '' %>" placeholder="เช่น กระเป๋าสตางค์สีดำ"></label>
+    <label>รายละเอียด / ตำหนิ<textarea name="description" rows="4" maxlength="2000"><%= item ? item.description : '' %></textarea></label>
+    <label>สถานที่<input name="location" maxlength="200" value="<%= item ? item.location : '' %>" placeholder="เช่น อาคาร A ชั้น 2"></label>
+    <label>วันที่หาย / พบ<input type="date" name="event_date" value="<%= item ? item.event_date : '' %>"></label>
+    <label>ช่องทางติดต่อ<input name="contact" maxlength="200" value="<%= item ? item.contact : '' %>" placeholder="เบอร์โทร / LINE / อีเมล"></label>
+    <label>แท็ก (คั่นด้วยเครื่องหมายจุลภาค ,)
+      <input name="tags" value="<%= item ? item.tags.join(', ') : '' %>" placeholder="กระเป๋า, สีดำ, อาคารA">
+    </label>
+    <label>รูปภาพ (ไม่เกิน 5MB)<input type="file" name="image" accept="image/*"></label>
+    <% if (item && item.image) { %>
+      <img src="/uploads/<%= item.image %>" class="preview" alt="">
+      <label class="check"><input type="checkbox" name="remove_image" value="1"> ลบรูปเดิม</label>
+    <% } %>
+    <button class="btn full">บันทึกข้อมูล</button>
+  </form>
+</div>
+<%- include('partials/footer') %>

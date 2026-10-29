@@ -1,0 +1,53 @@
+<%- include('partials/header', { title: 'ค้นหาของหาย' }) %>
+
+<section class="hero">
+  <h1>ตามหาของหาย หรือแจ้งของที่เก็บได้</h1>
+  <form method="get" action="/" class="search">
+    <input name="q" value="<%= q %>" placeholder="ค้นหาชื่อ รายละเอียด หรือสถานที่...">
+    <select name="type">
+      <option value="">ทุกประเภท</option>
+      <option value="lost" <%= type === 'lost' ? 'selected' : '' %>>ของหาย</option>
+      <option value="found" <%= type === 'found' ? 'selected' : '' %>>ของที่เก็บได้</option>
+    </select>
+    <select name="status">
+      <option value="">ทุกสถานะ</option>
+      <option value="open" <%= status === 'open' ? 'selected' : '' %>>ยังไม่ได้คืน</option>
+      <option value="returned" <%= status === 'returned' ? 'selected' : '' %>>คืนแล้ว</option>
+    </select>
+    <% selTags.forEach(t => { %><input type="hidden" name="tag" value="<%= t %>"><% }) %>
+    <button class="btn">ค้นหา</button>
+  </form>
+</section>
+
+<div class="layout">
+  <aside class="card">
+    <h3>แท็กในระบบ</h3>
+    <p class="muted small">คลิกเพื่อกรอง (เลือกได้หลายแท็ก)</p>
+    <% if (!allTags.length) { %><p class="muted">ยังไม่มีแท็ก</p><% } %>
+    <div class="tags">
+      <% allTags.forEach(t => { %>
+        <a href="<%= toggleTag(t.name) %>" class="tag <%= selTags.includes(t.name) ? 'active' : '' %>">
+          #<%= t.name %> <small><%= t.cnt %></small>
+        </a>
+      <% }) %>
+    </div>
+    <% if (selTags.length || q || type || status) { %>
+      <p><a href="/" class="small">✕ ล้างตัวกรองทั้งหมด</a></p>
+    <% } %>
+  </aside>
+
+  <section>
+    <p class="muted">
+      พบ <b><%= items.length %></b> รายการ
+      <% if (selTags.length) { %> ที่มีแท็ก <%= selTags.map(t => '#' + t).join(' + ') %><% } %>
+    </p>
+    <% if (!items.length) { %>
+      <div class="card empty">ไม่พบรายการที่ตรงกับเงื่อนไข</div>
+    <% } %>
+    <div class="grid">
+      <% items.forEach(i => { %><%- include('partials/item-card', { i }) %><% }) %>
+    </div>
+  </section>
+</div>
+
+<%- include('partials/footer') %>

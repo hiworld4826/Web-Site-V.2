@@ -1,0 +1,12 @@
+<%- include('partials/header', { title: 'สมัครสมาชิก' }) %>
+<div class="card form-card">
+  <h2>สมัครสมาชิก</h2>
+  <form method="post" action="/register">
+    <label>ชื่อผู้ใช้ (a-z, 0-9, _)<input name="username" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9_]+"></label>
+    <label>รหัสผ่าน (อย่างน้อย 6 ตัว)<input type="password" name="password" required minlength="6"></label>
+    <label>ยืนยันรหัสผ่าน<input type="password" name="confirm" required minlength="6"></label>
+    <button class="btn full">สมัครสมาชิก</button>
+  </form>
+  <p class="muted">มีบัญชีแล้ว? <a href="/login">เข้าสู่ระบบ</a></p>
+</div>
+<%- include('partials/footer') %>

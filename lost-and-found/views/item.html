@@ -1,0 +1,41 @@
+<%- include('partials/header', { title: item.title }) %>
+<div class="card detail">
+  <div>
+    <% if (item.image) { %>
+      <img src="/uploads/<%= item.image %>" class="detail-img" alt="<%= item.title %>">
+    <% } else { %>
+      <div class="noimg big">ไม่มีรูปภาพ</div>
+    <% } %>
+  </div>
+  <div>
+    <span class="badge <%= item.type %>"><%= item.type === 'lost' ? 'ของหาย' : 'ของที่เก็บได้' %></span>
+    <span class="badge <%= item.status %>"><%= item.status === 'returned' ? 'ส่งคืนแล้ว' : 'ยังไม่ได้คืน' %></span>
+    <h1><%= item.title %></h1>
+    <table class="info">
+      <tr><th>สถานที่</th><td><%= item.location || '-' %></td></tr>
+      <tr><th>วันที่</th><td><%= item.event_date || '-' %></td></tr>
+      <tr><th>ติดต่อ</th><td>
+        <% if (user) { %><%= item.contact || '-' %><% } else { %><a href="/login">เข้าสู่ระบบเพื่อดูช่องทางติดต่อ</a><% } %>
+      </td></tr>
+      <tr><th>แจ้งโดย</th><td><%= item.username %> (<%= item.created_at %>)</td></tr>
+    </table>
+    <% if (item.description) { %><p class="desc"><%= item.description %></p><% } %>
+    <div class="tags">
+      <% item.tags.forEach(t => { %><a class="tag" href="/?tag=<%= encodeURIComponent(t) %>">#<%= t %></a><% }) %>
+    </div>
+
+    <% if (manage) { %>
+      <div class="actions">
+        <a href="/items/<%= item.id %>/edit" class="btn btn-sm secondary">แก้ไข</a>
+        <form method="post" action="/items/<%= item.id %>/status" class="inline">
+          <button class="btn btn-sm"><%= item.status === 'open' ? 'ทำเครื่องหมายว่าคืนแล้ว' : 'เปิดรายการอีกครั้ง' %></button>
+        </form>
+        <form method="post" action="/items/<%= item.id %>/delete" class="inline" onsubmit="return confirm('ยืนยันการลบรายการนี้?')">
+          <button class="btn btn-sm danger">ลบ</button>
+        </form>
+      </div>
+    <% } %>
+  </div>
+</div>
+<p><a href="/">← กลับหน้าค้นหา</a></p>
+<%- include('partials/footer') %>

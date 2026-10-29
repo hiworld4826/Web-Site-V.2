@@ -1,0 +1,109 @@
+<%- include('partials/header', { title: 'แผงควบคุมแอดมิน' }) %>
+<%
+  const labels = {
+    register: 'สมัครสมาชิก', login: 'เข้าสู่ระบบ', login_failed: 'เข้าสู่ระบบไม่สำเร็จ', logout: 'ออกจากระบบ',
+    item_create: 'สร้างรายการ', item_update: 'แก้ไขรายการ', item_status: 'เปลี่ยนสถานะ', item_delete: 'ลบรายการ',
+    user_role: 'เปลี่ยนสิทธิ์', user_delete: 'ลบผู้ใช้', tag_delete: 'ลบแท็ก'
+  };
+%>
+<h1>แผงควบคุมผู้ดูแลระบบ</h1>
+
+<div class="stats">
+  <div class="stat"><b><%= stats.total %></b>รายการทั้งหมด</div>
+  <div class="stat"><b><%= stats.lost %></b>ของหาย</div>
+  <div class="stat"><b><%= stats.found %></b>ของที่เก็บได้</div>
+  <div class="stat"><b><%= stats.returned %></b>ส่งคืนแล้ว</div>
+  <div class="stat"><b><%= stats.users %></b>ผู้ใช้</div>
+</div>
+
+<nav class="tabs">
+  <a href="#items">รายการ</a><a href="#users">ผู้ใช้</a><a href="#tags">แท็ก</a><a href="#logs">ประวัติการใช้งาน (Log)</a>
+</nav>
+
+<section id="items" class="card">
+  <h2>รายการทั้งหมด</h2>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>#</th><th>ชื่อ</th><th>ประเภท</th><th>สถานะ</th><th>ผู้แจ้ง</th><th>วันที่แจ้ง</th><th>จัดการ</th></tr></thead>
+    <tbody>
+    <% items.forEach(i => { %>
+      <tr>
+        <td><%= i.id %></td>
+        <td><a href="/items/<%= i.id %>"><%= i.title %></a></td>
+        <td><span class="badge <%= i.type %>"><%= i.type === 'lost' ? 'หาย' : 'เก็บได้' %></span></td>
+        <td><span class="badge <%= i.status %>"><%= i.status === 'returned' ? 'คืนแล้ว' : 'เปิดอยู่' %></span></td>
+        <td><%= i.username %></td>
+        <td><%= i.created_at %></td>
+        <td class="row-actions">
+          <form method="post" action="/items/<%= i.id %>/status">
+            <input type="hidden" name="redirect" value="/admin#items">
+            <button class="btn btn-sm"><%= i.status === 'open' ? 'คืนแล้ว' : 'เปิดใหม่' %></button>
+          </form>
+          <form method="post" action="/items/<%= i.id %>/delete" onsubmit="return confirm('ลบรายการนี้?')">
+            <input type="hidden" name="redirect" value="/admin#items">
+            <button class="btn btn-sm danger">ลบ</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="users" class="card">
+  <h2>ผู้ใช้</h2>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>#</th><th>ชื่อผู้ใช้</th><th>สิทธิ์</th><th>จำนวนรายการ</th><th>สมัครเมื่อ</th><th>จัดการ</th></tr></thead>
+    <tbody>
+    <% users.forEach(u => { %>
+      <tr>
+        <td><%= u.id %></td>
+        <td><%= u.username %></td>
+        <td><span class="badge <%= u.role %>"><%= u.role %></span></td>
+        <td><%= u.item_count %></td>
+        <td><%= u.created_at %></td>
+        <td class="row-actions">
+          <% if (u.id !== user.id) { %>
+            <form method="post" action="/admin/users/<%= u.id %>/role">
+              <button class="btn btn-sm secondary"><%= u.role === 'admin' ? 'ลดเป็น user' : 'ตั้งเป็น admin' %></button>
+            </form>
+            <form method="post" action="/admin/users/<%= u.id %>/delete" onsubmit="return confirm('ลบผู้ใช้และรายการทั้งหมดของผู้ใช้นี้?')">
+              <button class="btn btn-sm danger">ลบ</button>
+            </form>
+          <% } else { %><span class="muted small">(คุณ)</span><% } %>
+        </td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="tags" class="card">
+  <h2>แท็ก</h2>
+  <% if (!tags.length) { %><p class="muted">ยังไม่มีแท็ก</p><% } %>
+  <div class="tags">
+    <% tags.forEach(t => { %>
+      <form method="post" action="/admin/tags/<%= t.id %>/delete" class="tag-del" onsubmit="return confirm('ลบแท็ก #<%= t.name %>?')">
+        <span class="tag">#<%= t.name %> <small><%= t.cnt %></small></span><button title="ลบ">✕</button>
+      </form>
+    <% }) %>
+  </div>
+</section>
+
+<section id="logs" class="card">
+  <h2>ประวัติการใช้งาน (200 รายการล่าสุด)</h2>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>เวลา</th><th>ผู้ใช้</th><th>การกระทำ</th><th>รายละเอียด</th></tr></thead>
+    <tbody>
+    <% logs.forEach(l => { %>
+      <tr class="<%= l.action === 'login_failed' ? 'warn' : '' %>">
+        <td><%= l.created_at %></td>
+        <td><%= l.username || '-' %></td>
+        <td><%= labels[l.action] || l.action %></td>
+        <td><%= l.detail %></td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table></div>
+</section>
+
+<%- include('partials/footer') %>

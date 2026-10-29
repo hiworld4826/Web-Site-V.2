@@ -1,0 +1,11 @@
+<%- include('partials/header', { title: 'เข้าสู่ระบบ' }) %>
+<div class="card form-card">
+  <h2>เข้าสู่ระบบ</h2>
+  <form method="post" action="/login">
+    <label>ชื่อผู้ใช้<input name="username" required autofocus></label>
+    <label>รหัสผ่าน<input type="password" name="password" required></label>
+    <button class="btn full">เข้าสู่ระบบ</button>
+  </form>
+  <p class="muted">ยังไม่มีบัญชี? <a href="/register">สมัครสมาชิก</a></p>
+</div>
+<%- include('partials/footer') %>
